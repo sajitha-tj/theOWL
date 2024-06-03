@@ -215,9 +215,13 @@ add_new_user(){
 
 # 4 | set up LD_PRELOAD vulnerability and sudo for find
 add_ld_preload_for_find(){
-	echo "Defaults    env_keep += LD_PRELOAD" >> /etc/sudoers
-	echo -e "[+] LD_PRELOAD added to sudoers"
-	OWL_HISTORY+=("ld-pre /etc/sudoers")
+	LD_PRELOAD_IS_THERE=$(grep "LD_PRELOAD" /etc/sudoers)
+	if [[ $LD_PRELOAD_IS_THERE == "" ]]; then
+		echo "Defaults    env_keep += LD_PRELOAD" >> /etc/sudoers
+		echo -e "[+] LD_PRELOAD added to sudoers"
+		OWL_HISTORY+=("ld-pre /etc/sudoers")
+	fi
+	echo -e "[!] LD_PRELOAD already exists in sudoers"
 
 	read -p "Enter a valid username to give privilages: " USER
 	if [[ -d "/home/$USER" ]]; then
@@ -511,7 +515,6 @@ display_terminal_help(){
 }
 
 terminal_mode_loop(){
-	# TODO: need to add a proper help text and a command too
 	display_terminal_help
 	while [[ 1 ]]; do
 		echo ""
@@ -540,7 +543,6 @@ terminal_mode_loop(){
 }
 
 ################ Auto-Mode ##################################################
-# TODO: need an overide method for listening port configurations with auto mode
 auto_mode_owl(){
 	ssh_key_generator
 	add_new_user

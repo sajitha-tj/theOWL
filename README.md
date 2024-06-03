@@ -1,7 +1,7 @@
 # The OWL [The One-Who-Laughs]
 
 ## Overview
-The OWL is a bash script designed to help ensure continued access to a target system by performing several actions that enhance access privileges and establish multiple backdoor mechanisms. This tool is intended for educational and research purposes only.
+The OWL is a bash script designed to help ensure continued access to a linux based target system by performing several actions that enhance access privileges and establish multiple backdoor mechanisms. This tool is intended for educational and research purposes only.
 
 **Disclaimer:** Misuse of this script for illegal activities is prohibited. The author is not responsible for any consequences. Use at your own risk.
 
@@ -40,7 +40,7 @@ theOWL operates in two main modes: Auto-mode and Terminal-mode. See examples bel
 
 ### Terminal-mode
 Terminal-mode allows you to selectively execute functions, providing more flexible persistent methods. You can set up different listening ports for different backdoors, ensuring continuous access to the system for a longer time. The following commands can be used in terminal-mode:
-```
+
      Command       | Description
 -------------------|-------------------------------------------
    ? / h /help     | display terminal-mode commands
@@ -54,7 +54,6 @@ Terminal-mode allows you to selectively execute functions, providing more flexib
    9 / history     | display history (changes did)
    0 / reverse     | revert all changes back!
    bye / exit      | exit out of the OWL
-```
 
 ### Auto-mode
 Auto-mode is for quick setups. It does not allow customization of listening ports but uses the same port for every backdoor. It is useful when time is limited, ensuring multiple backdoor access methods within seconds. It goes through SSH key generation, obfuscating private SSH keys, adding a new user, setting up shells in crontab and bashrc, and adding a reverse shell as a systemd service. Note that not all functions available in terminal-mode are used here.
@@ -86,8 +85,11 @@ Auto-mode is for quick setups. It does not allow customization of listening port
 sudo ./theOWL.sh --force-reverse .owl_hst_tmp
 ```
 
-### Fun-fact
+### Fun Fact
 If you are ever wondering where the name comes from, "The One-Who-Laughs" is one of the many aliases used by the DC Comics villain, the [Batman Who Laughs](https://dc.fandom.com/wiki/Bruce_Wayne_(Earth_-22)). He was a dark and strategic character who always finds a way to stay one step ahead, embodying a sense of omnipresence and relentless control. Much like the Batman Who Laughs, theOWL script ensures continuous access to a target system through multiple backdoors, guaranteeing no single failure can prevent control.
+
+## License
+This project is licensed under the GPL-3.0 License - see the [LICENSE](https://github.com/sajitha-tj/theOWL/blob/main/LICENSE) file for details.
 
 ## Contributing
 Feel free to fork this repository and submit pull requests for any improvements or additional features. xD

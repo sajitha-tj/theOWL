@@ -40,7 +40,7 @@ theOWL operates in two main modes: Auto-mode and Terminal-mode. See examples bel
 
 ### Terminal-mode
 Terminal-mode allows you to selectively execute functions, providing more flexible persistent methods. You can set up different listening ports for different backdoors, ensuring continuous access to the system for a longer time. The following commands can be used in terminal-mode:
-
+```
      Command       | Description
 -------------------|-------------------------------------------
    ? / h /help     | display terminal-mode commands
@@ -54,6 +54,7 @@ Terminal-mode allows you to selectively execute functions, providing more flexib
    9 / history     | display history (changes did)
    0 / reverse     | revert all changes back!
    bye / exit      | exit out of the OWL
+```
 
 ### Auto-mode
 Auto-mode is for quick setups. It does not allow customization of listening ports but uses the same port for every backdoor. It is useful when time is limited, ensuring multiple backdoor access methods within seconds. It goes through SSH key generation, obfuscating private SSH keys, adding a new user, setting up shells in crontab and bashrc, and adding a reverse shell as a systemd service. Note that not all functions available in terminal-mode are used here.
